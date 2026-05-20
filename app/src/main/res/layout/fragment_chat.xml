@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="18dp"
+        android:background="@drawable/header_gradient">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <FrameLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ai_avatar_bg">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="AI"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_on_primary"
+                    android:textSize="15sp" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Casablanca Assistant"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/text_on_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Voice, places and local guidance"
+                    android:textSize="12sp"
+                    android:textColor="#DCE7FF"
+                    android:layout_marginTop="3dp" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/clearButton"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_refresh"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:contentDescription="Clear conversation" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/chatListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:clipToPadding="false" />
+
+        <TextView
+            android:id="@+id/typingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="12dp"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            android:text="Assistant is typing..."
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/typing_indicator_bg"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:background="@color/surface">
+
+        <LinearLayout
+            android:id="@+id/suggestionsContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="12dp" />
+
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp"
+        android:background="@color/surface"
+        android:elevation="10dp">
+
+        <ImageButton
+            android:id="@+id/voiceButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_mic"
+            android:background="@drawable/mic_button_bg"
+            android:scaleType="centerInside"
+            android:contentDescription="Voice input"
+            android:layout_marginEnd="10dp" />
+
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:hint="Ask about places, routes or plans"
+            android:textSize="14sp"
+            android:paddingHorizontal="18dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_tertiary"
+            android:background="@drawable/search_pill_bg"
+            android:singleLine="true"
+            android:imeOptions="actionSend"
+            android:inputType="text|textAutoCorrect|textCapSentences"
+            android:importantForAutofill="no"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="18dp"
+            android:text="Send"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/primary_button_bg"
+            android:textColor="@color/text_on_primary"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+    </LinearLayout>
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/voiceOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp"
+        android:background="#F2FFFFFF"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="32dp">
+
+            <View
+                android:id="@+id/voiceMicCircle"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:background="@drawable/voice_mic_circle_bg" />
+
+            <ImageButton
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_mic"
+                android:scaleType="centerInside"
+                android:background="@android:color/transparent"
+                android:contentDescription="Voice input active"
+                android:clickable="false"
+                android:focusable="false" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/voiceTranscriptText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="80dp"
+            android:text="Listening..."
+            android:textSize="18sp"
+            android:textColor="@color/text_primary"
+            android:lineSpacingExtra="4dp"
+            android:paddingHorizontal="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Tap anywhere to cancel"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="140dp"
+    android:height="140dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- White circle background -->
+    <path
+        android:pathData="M 60 5 A 55 55 0 1 1 60 115 A 55 55 0 1 1 60 5 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Pin -->
+    <path
+        android:pathData="M 60 25 C 47 25 37 35 37 48 C 37 65 60 90 60 90 C 60 90 83 65 83 48 C 83 35 73 25 60 25 Z"
+        android:fillColor="#E63946" />
+
+    <!-- Inner circle -->
+    <path
+        android:pathData="M 60 38 A 10 10 0 1 1 60 58 A 10 10 0 1 1 60 38 Z"
+        android:fillColor="#FFFFFF" />
+
+</vector>

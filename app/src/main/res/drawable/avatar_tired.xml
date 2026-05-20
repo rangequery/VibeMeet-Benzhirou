@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Fond cercle bleu pale -->
+    <path
+        android:fillColor="#A8D8EA"
+        android:pathData="M100,100m-90,0a90,90 0,1 1,180 0a90,90 0,1 1,-180 0" />
+
+    <!-- Oeil gauche (mi-clos) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M55,80 L85,80" />
+
+    <!-- Oeil droit (mi-clos) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M115,80 L145,80" />
+
+    <!-- Bouche neutre/fatiguee -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M70,130 L130,130" />
+
+    <!-- Goutte de sueur -->
+    <path
+        android:fillColor="#4FC3F7"
+        android:pathData="M155,55 Q160,70 155,75 Q150,70 155,55" />
+</vector>

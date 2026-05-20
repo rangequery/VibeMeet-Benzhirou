@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="22dp"
+        android:orientation="vertical"
+        android:background="@drawable/header_gradient">
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome to VibeMeet"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/text_on_primary" />
+
+        <TextView
+            android:id="@+id/stepIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 1 of 3"
+            android:textSize="15sp"
+            android:textColor="#DCE7FF"
+            android:layout_marginTop="6dp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surface">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <LinearLayout
+                    android:id="@+id/step1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="What should we call you?"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Your name helps personalize the assistant, recommendations and profile."
+                        android:textSize="16sp"
+                        android:textColor="@color/text_secondary"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginTop="8dp" />
+
+                    <EditText
+                        android:id="@+id/nameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="58dp"
+                        android:hint="Your name"
+                        android:inputType="textPersonName"
+                        android:autofillHints="name"
+                        android:paddingHorizontal="16dp"
+                        android:background="@drawable/input_background"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_tertiary"
+                        android:layout_marginTop="22dp"
+                        android:singleLine="true" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/step2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Choose your interests"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select the experiences you want VibeMeet to prioritize."
+                        android:textSize="16sp"
+                        android:textColor="@color/text_secondary"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginTop="8dp" />
+
+                    <LinearLayout
+                        android:id="@+id/interestChips"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="22dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/step3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Set your budget style"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="This keeps venue suggestions realistic for your plans."
+                        android:textSize="16sp"
+                        android:textColor="@color/text_secondary"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginTop="8dp" />
+
+                    <RadioGroup
+                        android:id="@+id/budgetGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="22dp">
+
+                        <RadioButton
+                            android:id="@+id/budget_low"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Budget-friendly · under 100 MAD"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            android:paddingVertical="10dp" />
+
+                        <RadioButton
+                            android:id="@+id/budget_mid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mid-range · 100–400 MAD"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            android:paddingVertical="10dp"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:id="@+id/budget_high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Premium · 400+ MAD"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            android:paddingVertical="10dp" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/surface"
+        android:elevation="8dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="0dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="Skip"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:background="@drawable/secondary_button_bg"
+            android:backgroundTint="@null"
+            android:textColor="@color/brand_primary"
+            android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="0dp"
+            android:layout_height="58dp"
+            android:layout_weight="2"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:background="@drawable/primary_button_bg"
+            android:backgroundTint="@null"
+            android:textColor="@color/text_on_primary"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/topFilterCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/surface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/mapCategoryFilter"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_background"
+                android:paddingHorizontal="10dp" />
+
+            <TextView
+                android:id="@+id/venueCount"
+                android:layout_width="78dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="0\nvenues"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/brand_primary"
+                android:lineSpacingExtra="0dp"
+                android:background="@drawable/brand_count_pill_bg"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/btnStyleToggle"
+        android:layout_width="108dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/topFilterCard"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:text="Night"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:background="@drawable/secondary_button_bg"
+        android:backgroundTint="@null"
+        android:textColor="@color/brand_primary"
+        android:elevation="4dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp" />
+
+    <LinearLayout
+        android:id="@+id/mapBottomControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="88dp"
+        android:baselineAligned="false">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnMyLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_nav_map"
+            android:contentDescription="Use my location"
+            app:fabSize="normal"
+            app:tint="@color/text_on_primary"
+            app:backgroundTint="@color/brand_primary" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnRecenter"
+            android:layout_width="124dp"
+            android:layout_height="52dp"
+            android:text="Center"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/primary_button_bg"
+            android:backgroundTint="@null"
+            android:textColor="@color/text_on_primary"
+            android:elevation="4dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,6 @@
+CREATE TABLE vibes (
+  id SERIAL PRIMARY KEY,
+  label TEXT NOT NULL,
+  score REAL NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);

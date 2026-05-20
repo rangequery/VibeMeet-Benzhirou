@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="@drawable/header_gradient">
+
+    <ImageView
+        android:id="@+id/splashLogo"
+        android:layout_width="132dp"
+        android:layout_height="132dp"
+        android:src="@drawable/ic_splash_logo"
+        android:contentDescription="VibeMeet logo"
+        android:layout_marginBottom="26dp" />
+
+    <TextView
+        android:id="@+id/splashAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VibeMeet"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/text_on_primary"
+        android:letterSpacing="0.04" />
+
+    <TextView
+        android:id="@+id/splashTagline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Smart city discovery for Casablanca"
+        android:textSize="16sp"
+        android:textColor="#DCE7FF"
+        android:gravity="center"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>

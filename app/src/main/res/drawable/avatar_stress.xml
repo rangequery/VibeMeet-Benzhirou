@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Fond cercle rouge/orange -->
+    <path
+        android:fillColor="#FF6B6B"
+        android:pathData="M100,100m-90,0a90,90 0,1 1,180 0a90,90 0,1 1,-180 0" />
+
+    <!-- Oeil gauche (grand ouvert) -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M70,75m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+
+    <!-- Oeil droit (grand ouvert) -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M130,75m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+
+    <!-- Sourcil gauche fronce -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M55,58 L80,52" />
+
+    <!-- Sourcil droit fronce -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M120,52 L145,58" />
+
+    <!-- Bouche crispee -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="4"
+        android:pathData="M65,130 Q80,120 95,130 Q110,120 135,130" />
+</vector>

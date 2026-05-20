@@ -1,0 +1,83 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.example.vibemeet'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.example.vibemeet"
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    // Model & script files must not be compressed in the APK so WebViewAssetLoader can serve them
+    aaptOptions {
+        noCompress "task"
+        noCompress "glb"
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.cardview
+    implementation libs.swiperefreshlayout
+    implementation libs.fragment
+    implementation libs.recyclerview
+    implementation libs.glide
+
+    // CameraX for live preview
+    implementation libs.camera.core
+    implementation libs.camera.camera2
+    implementation libs.camera.lifecycle
+    implementation libs.camera.view
+
+    // ML Kit Face Detection (on-device AI model - the "AI Model" MVP)
+    implementation libs.mlkit.face.detection
+
+    // MediaPipe Tasks Vision (3D face landmarks for the Digital Twin)
+    implementation libs.mediapipe.tasks.vision
+
+    // WebViewAssetLoader for serving local assets to WebView via virtual https://
+    implementation libs.androidx.webkit
+
+    // OkHttp (used for both Claude API and general networking)
+    implementation libs.okhttp
+
+    // Google Maps & Location
+    implementation libs.play.services.maps
+    implementation libs.play.services.location
+
+    // Google Places SDK
+    implementation libs.places
+
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}

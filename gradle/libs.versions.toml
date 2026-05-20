@@ -1,0 +1,74 @@
+[versions]
+agp = "8.7.3"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.3"
+constraintlayout = "2.2.0"
+camerax = "1.3.4"
+okhttp = "4.12.0"
+playServicesMaps = "18.2.0"
+playServicesLocation = "21.1.0"
+places = "3.5.0"
+cardview = "1.0.0"
+swiperefreshlayout = "1.1.0"
+fragment = "1.8.5"
+recyclerview = "1.3.2"
+glide = "4.16.0"
+mlkitFaceDetection = "16.1.7"
+mediapipeTasks = "0.10.14"
+webkit = "1.10.0"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+# CameraX for live preview (used by Digital Twin)
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+
+# OkHttp (Claude API + general networking)
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+# Google Maps & Location
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+# Google Places SDK
+places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+
+# CardView
+cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+
+# SwipeRefreshLayout
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+
+# Fragment
+fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
+
+# RecyclerView
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+
+# Glide for image loading
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+
+# ML Kit Face Detection (on-device AI model for Digital Twin)
+mlkit-face-detection = { group = "com.google.mlkit", name = "face-detection", version.ref = "mlkitFaceDetection" }
+
+# MediaPipe Tasks Vision (3D face landmarks for the Digital Twin)
+mediapipe-tasks-vision = { group = "com.google.mediapipe", name = "tasks-vision", version.ref = "mediapipeTasks" }
+
+# AndroidX WebKit — provides WebViewAssetLoader for serving assets via virtual https://
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }

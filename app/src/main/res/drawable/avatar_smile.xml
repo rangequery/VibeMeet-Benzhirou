@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Fond cercle jaune -->
+    <path
+        android:fillColor="#FFD93D"
+        android:pathData="M100,100m-90,0a90,90 0,1 1,180 0a90,90 0,1 1,-180 0" />
+
+    <!-- Oeil gauche -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M70,80m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0" />
+
+    <!-- Oeil droit -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M130,80m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0" />
+
+    <!-- Sourire -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="5"
+        android:pathData="M60,120 Q100,160 140,120" />
+</vector>

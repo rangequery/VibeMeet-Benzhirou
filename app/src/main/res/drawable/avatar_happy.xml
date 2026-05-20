@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Face circle -->
+    <path
+        android:pathData="M 100 20 A 80 80 0 1 1 100 180 A 80 80 0 1 1 100 20 Z"
+        android:fillColor="#FFE082"
+        android:strokeColor="#FBC02D"
+        android:strokeWidth="2" />
+
+    <!-- Left Eye -->
+    <path
+        android:pathData="M 75 80 A 6 6 0 1 1 75 80.001 Z"
+        android:fillColor="#333333" />
+
+    <!-- Right Eye -->
+    <path
+        android:pathData="M 125 80 A 6 6 0 1 1 125 80.001 Z"
+        android:fillColor="#333333" />
+
+    <!-- Happy Mouth -->
+    <path
+        android:pathData="M 75 120 Q 100 145 125 120"
+        android:strokeColor="#333333"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+</vector>

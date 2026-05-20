@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Digital Twin</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, system-ui, sans-serif;
+    -webkit-user-select: none;
+  }
+  body {
+    background:
+      radial-gradient(circle at 50% 26%, rgba(84, 214, 203, 0.24), transparent 28%),
+      radial-gradient(circle at 50% 48%, #243B6B 0%, #111827 54%, #070B12 100%);
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+  #loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #111827;
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.94);
+    padding: 14px 22px;
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+    z-index: 10;
+  }
+  #debug { display: none; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="loading">Loading face model...</div>
+<div id="debug">Init</div>
+
+<script>
+function logDebug(msg, isError) {
+  const dbg = document.getElementById('debug');
+  if (dbg) dbg.innerHTML += '<br>' + (isError ? 'ERROR: ' : '') + msg;
+  if (isError) console.error(msg); else console.log(msg);
+}
+window.onerror = function(msg, src, lineno) {
+  logDebug('JS error: ' + msg + ' @ ' + (src || '').split('/').pop() + ':' + lineno, true);
+};
+window.addEventListener('unhandledrejection', function(e) {
+  logDebug('Promise rejection: ' + (e.reason && e.reason.message || e.reason), true);
+});
+</script>
+
+<script src="./three.min.js"></script>
+<script src="./GLTFLoader.js"></script>
+<script src="./meshopt_decoder.js"></script>
+
+<script>
+'use strict';
+
+const scene = new THREE.Scene();
+const canvas = document.getElementById('canvas');
+const camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.01, 100);
+
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight, false);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.localClippingEnabled = false;
+
+scene.add(new THREE.AmbientLight(0xffffff, 1.05));
+const key = new THREE.DirectionalLight(0xffffff, 1.65);
+key.position.set(1.4, 1.8, 2.2);
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xb9d8ff, 0.72);
+fill.position.set(-1.6, 0.8, 1.5);
+scene.add(fill);
+const rim = new THREE.DirectionalLight(0x54d6cb, 0.68);
+rim.position.set(0, 1.4, -2.4);
+scene.add(rim);
+
+let avatarRoot = null;
+let headGroup = null;
+let faceMesh = null;
+let influencesByName = {};
+let influenceArray = null;
+let morphTargetsByName = {};
+let headBone = null;
+let leftEyeBone = null;
+let rightEyeBone = null;
+let neutralHeadRotation = null;
+let neutralLeftEyeRotation = null;
+let neutralRightEyeRotation = null;
+let useHeadBonePose = true;
+let lastVisemeName = null;
+
+const loader = new THREE.GLTFLoader();
+try { loader.setMeshoptDecoder(MeshoptDecoder); } catch (e) { logDebug('meshopt setup failed', true); }
+
+function getModelUrl() {
+  try {
+    if (window.AndroidBridge && window.AndroidBridge.getAvatarGlbUrl) {
+      const imported = window.AndroidBridge.getAvatarGlbUrl();
+      if (imported && imported.trim().length > 0) return imported;
+    }
+  } catch (e) {
+    logDebug('Could not read imported avatar URL: ' + e.message, true);
+  }
+  return './metaperson_avatar.glb';
+}
+
+function nameOf(obj) {
+  return (obj && obj.name ? obj.name : '').toLowerCase();
+}
+
+function rememberBones(root) {
+  root.traverse((obj) => {
+    if (!obj.isBone) return;
+    const n = nameOf(obj);
+    if (!headBone && (n === 'head' || n.endsWith('_head') || n.includes('head'))) headBone = obj;
+    if (!leftEyeBone && (n === 'lefteye' || n === 'left_eye' || n.includes('lefteye') || n.includes('left_eye'))) leftEyeBone = obj;
+    if (!rightEyeBone && (n === 'righteye' || n === 'right_eye' || n.includes('righteye') || n.includes('right_eye'))) rightEyeBone = obj;
+  });
+}
+
+function isEyeMesh(obj) {
+  const n = nameOf(obj);
+  const matName = nameOf(obj.material || {});
+  return n.includes('eye') || n.includes('cornea') || n.includes('iris') || matName.includes('eye') || matName.includes('cornea') || matName.includes('iris');
+}
+
+function shouldKeepForBust(obj) {
+  const n = nameOf(obj);
+  const hasMorphs = obj.morphTargetDictionary && Object.keys(obj.morphTargetDictionary).length > 0;
+  const keepNames = [
+    'avatarhead', 'head', 'face', 'eye', 'eyeball', 'cornea', 'iris', 'pupil', 'eyelash', 'lash', 'brow',
+    'teeth', 'tooth', 'mouth', 'tongue', 'hair', 'haircut', 'beard', 'mustache',
+    'moustache', 'glass', 'glasses', 'ear', 'skin', 'wolf3d_head', 'wolf3d_hair',
+    'wolf3d_teeth', 'wolf3d_beard', 'wolf3d_glasses'
+  ];
+  const dropNames = [
+    'avatarbody', 'body', 'outfit', 'shirt', 'top', 'bottom', 'pants', 'trouser',
+    'shoe', 'sneaker', 'dress', 'hoodie', 'jacket', 'coat', 'arm', 'hand', 'leg',
+    'foot', 'torso', 'chest', 'hips', 'spine', 'shoulder'
+  ];
+  const keepByName = keepNames.some(k => n.includes(k));
+  const dropByName = dropNames.some(k => n.includes(k));
+  return keepByName || isEyeMesh(obj) || (hasMorphs && !dropByName);
+}
+
+function fixEyeMaterial(obj) {
+  if (!isEyeMesh(obj) || !obj.material) return;
+  const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+  materials.forEach((mat) => {
+    if (!mat) return;
+    const matName = nameOf(mat);
+    mat.depthWrite = true;
+    mat.depthTest = true;
+    mat.side = THREE.DoubleSide;
+    mat.transparent = matName.includes('cornea');
+    if (matName.includes('cornea')) {
+      mat.opacity = 0.18;
+      mat.roughness = 0.02;
+      mat.metalness = 0;
+    } else {
+      mat.opacity = 1;
+      mat.transparent = false;
+      if (mat.color && (matName.includes('eye') || matName.includes('iris') || matName.includes('pupil'))) {
+        mat.color.multiplyScalar(1.25);
+      }
+    }
+    mat.needsUpdate = true;
+  });
+}
+
+function prepareBust(root) {
+  rememberBones(root);
+  morphTargetsByName = {};
+
+  const kept = [];
+  let hidden = 0;
+  let morphMeshCount = 0;
+
+  root.traverse((obj) => {
+    if (!obj.isMesh) return;
+    obj.frustumCulled = false;
+
+    const hasMorphs = obj.morphTargetDictionary && Object.keys(obj.morphTargetDictionary).length > 0;
+    if (hasMorphs) {
+      morphMeshCount++;
+      const cnt = Object.keys(obj.morphTargetDictionary).length;
+      Object.keys(obj.morphTargetDictionary).forEach((name) => {
+        if (!morphTargetsByName[name]) morphTargetsByName[name] = [];
+        morphTargetsByName[name].push({ mesh: obj, index: obj.morphTargetDictionary[name] });
+      });
+      if (!faceMesh || cnt > Object.keys(influencesByName).length) {
+        faceMesh = obj;
+        influenceArray = obj.morphTargetInfluences;
+        influencesByName = obj.morphTargetDictionary;
+      }
+    }
+
+    fixEyeMaterial(obj);
+
+    if (shouldKeepForBust(obj)) {
+      obj.visible = true;
+      kept.push(obj);
+    } else {
+      obj.visible = false;
+      hidden++;
+    }
+  });
+
+  if (kept.length === 0 && faceMesh) {
+    faceMesh.visible = true;
+    kept.push(faceMesh);
+  }
+
+  logDebug('Bust meshes kept=' + kept.length + ' hidden=' + hidden + ' morphMeshes=' + morphMeshCount + ' morphNames=' + Object.keys(morphTargetsByName).length + ' headBone=' + !!headBone);
+  return kept;
+}
+
+function buildBox(objects, fallbackRoot) {
+  const box = new THREE.Box3();
+  let hasBox = false;
+  objects.forEach((obj) => {
+    if (!obj.visible) return;
+    const mb = new THREE.Box3().setFromObject(obj);
+    if (!Number.isFinite(mb.min.x) || !Number.isFinite(mb.max.x)) return;
+    if (!hasBox) { box.copy(mb); hasBox = true; }
+    else box.union(mb);
+  });
+  if (!hasBox) box.setFromObject(fallbackRoot);
+  return box;
+}
+
+function createHeadGroup(root, bustMeshes) {
+  root.updateMatrixWorld(true);
+  const box = buildBox(bustMeshes, root);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+
+  headGroup = new THREE.Group();
+  scene.add(headGroup);
+  headGroup.add(root);
+
+  root.position.sub(center);
+  root.updateMatrixWorld(true);
+
+  const largest = Math.max(size.x, size.y, size.z, 0.001);
+  const targetHeight = 1.82;
+  headGroup.scale.setScalar(targetHeight / Math.max(size.y, 0.001));
+
+  const yBias = -0.04;
+  headGroup.position.set(0, yBias, 0);
+  headGroup.updateMatrixWorld(true);
+
+  const framedBox = buildBox(bustMeshes, headGroup);
+  const framedSize = framedBox.getSize(new THREE.Vector3());
+  const maxDim = Math.max(framedSize.x, framedSize.y, framedSize.z, largest);
+  const fov = camera.fov * Math.PI / 180;
+  const distance = (maxDim * 0.96) / (2 * Math.tan(fov / 2));
+
+  camera.position.set(0, 0.02, Math.max(2.25, distance));
+  camera.lookAt(0, 0.02, 0);
+  camera.updateProjectionMatrix();
+
+  logDebug('Bust framed size=' + framedSize.x.toFixed(2) + ',' + framedSize.y.toFixed(2) + ',' + framedSize.z.toFixed(2) + ' distance=' + camera.position.z.toFixed(2));
+}
+
+function loadAvatar(urls, index) {
+  const url = urls[index];
+  loader.load(
+    url,
+    function(gltf) {
+      avatarRoot = gltf.scene;
+      const bustMeshes = prepareBust(avatarRoot);
+      createHeadGroup(avatarRoot, bustMeshes);
+
+      if (headBone) neutralHeadRotation = headBone.rotation.clone();
+      if (leftEyeBone) neutralLeftEyeRotation = leftEyeBone.rotation.clone();
+      if (rightEyeBone) neutralRightEyeRotation = rightEyeBone.rotation.clone();
+
+      document.getElementById('loading').style.display = 'none';
+      logDebug('Loaded avatar: ' + url);
+      if (window.AndroidBridge && window.AndroidBridge.onAvatarReady) window.AndroidBridge.onAvatarReady();
+    },
+    function(xhr) {
+      const loading = document.getElementById('loading');
+      if (!loading) return;
+      if (xhr.total) {
+        const pct = Math.round((xhr.loaded / xhr.total) * 100);
+        loading.innerText = pct + '% loading face model';
+      } else {
+        loading.innerText = 'Loading face model...';
+      }
+    },
+    function(err) {
+      logDebug('GLB load failed for ' + url + ': ' + (err.message || err.type || 'unknown'), true);
+      if (index + 1 < urls.length) {
+        loadAvatar(urls, index + 1);
+      } else {
+        document.getElementById('loading').innerText = 'Could not load avatar';
+      }
+    }
+  );
+}
+
+loadAvatar([getModelUrl(), './facecap.glb', './user_avatar.glb'], 0);
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', function() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+});
+
+function setMorph(name, value) {
+  const v = Math.max(0, Math.min(1, value));
+  const candidates = [
+    name,
+    name.replace(/Left$/, '_L'),
+    name.replace(/Right$/, '_R'),
+    name.replace(/Left$/, 'Left'),
+    name.replace(/Right$/, 'Right')
+  ];
+  for (let i = 0; i < candidates.length; i++) {
+    const targets = morphTargetsByName[candidates[i]];
+    if (targets && targets.length) {
+      targets.forEach((target) => {
+        if (target.mesh.morphTargetInfluences) target.mesh.morphTargetInfluences[target.index] = v;
+      });
+      return true;
+    }
+  }
+  return false;
+}
+
+function clearVisemes() {
+  ['CH', 'DD', 'E', 'FF', 'PP', 'RR', 'SS', 'TH', 'aa', 'ih', 'kk', 'nn', 'oh', 'ou', 'sil'].forEach((name) => {
+    setMorph(name, 0);
+  });
+}
+
+function applyPseudoLipSync(b) {
+  const jaw = b.jawOpen || 0;
+  const funnel = b.mouthFunnel || 0;
+  const pucker = b.mouthPucker || 0;
+  const smile = ((b.mouthSmileLeft || 0) + (b.mouthSmileRight || 0)) * 0.5;
+  const mouthEnergy = Math.max(jaw, funnel, pucker, smile * 0.65);
+
+  clearVisemes();
+  if (mouthEnergy < 0.04) {
+    setMorph('sil', 0.65);
+    lastVisemeName = 'sil';
+    return;
+  }
+
+  let viseme = 'aa';
+  if (pucker > 0.38 || funnel > 0.36) viseme = pucker > funnel ? 'ou' : 'oh';
+  else if (smile > 0.35 && jaw < 0.45) viseme = 'E';
+  else if (jaw > 0.58) viseme = 'aa';
+  else if (jaw > 0.24) viseme = lastVisemeName === 'ih' ? 'aa' : 'ih';
+
+  const visemeStrength = Math.min(1, Math.max(0.18, mouthEnergy * 1.35));
+  setMorph(viseme, visemeStrength);
+  lastVisemeName = viseme;
+}
+
+window.applyBlendshapes = function(b) {
+  if (!avatarRoot && !headGroup) return;
+  if (typeof b === 'string') {
+    try { b = JSON.parse(b); } catch (e) { return; }
+  }
+  if (b.faceDetected === false) return;
+
+  const pitch = (b.headPitch || 0) * Math.PI / 180 * 0.55;
+  const yaw = (b.headYaw || 0) * Math.PI / 180 * 0.55;
+  const roll = (b.headRoll || 0) * Math.PI / 180 * 0.55;
+
+  if (headBone && useHeadBonePose) {
+    if (neutralHeadRotation) headBone.rotation.copy(neutralHeadRotation);
+    headBone.rotation.x += pitch;
+    headBone.rotation.y += yaw;
+    headBone.rotation.z += roll;
+  } else if (headGroup) {
+    headGroup.rotation.x = pitch;
+    headGroup.rotation.y = yaw;
+    headGroup.rotation.z = roll;
+  }
+
+  if (leftEyeBone || rightEyeBone) {
+    const lookY = ((b.eyeLookUpLeft || 0) + (b.eyeLookUpRight || 0)) / 2
+                - ((b.eyeLookDownLeft || 0) + (b.eyeLookDownRight || 0)) / 2;
+    const eyeX = -lookY * 0.35;
+    if (leftEyeBone) {
+      if (neutralLeftEyeRotation) leftEyeBone.rotation.copy(neutralLeftEyeRotation);
+      leftEyeBone.rotation.x += eyeX;
+    }
+    if (rightEyeBone) {
+      if (neutralRightEyeRotation) rightEyeBone.rotation.copy(neutralRightEyeRotation);
+      rightEyeBone.rotation.x += eyeX;
+    }
+  }
+
+  applyPseudoLipSync(b);
+  setMorph('jawOpen', (b.jawOpen || 0) * 1.25);
+  setMorph('mouthClose', Math.max(0, 0.35 - (b.jawOpen || 0)));
+  setMorph('mouthSmileLeft', (b.mouthSmileLeft || 0) * 1.35);
+  setMorph('mouthSmileRight', (b.mouthSmileRight || 0) * 1.35);
+  setMorph('mouthFrownLeft', (b.mouthFrownLeft || 0) * 1.2);
+  setMorph('mouthFrownRight', (b.mouthFrownRight || 0) * 1.2);
+  setMorph('mouthPucker', (b.mouthPucker || 0) * 1.2);
+  setMorph('mouthFunnel', (b.mouthFunnel || 0) * 1.2);
+  setMorph('eyeBlinkLeft', (b.eyeBlinkLeft || 0) * 1.15);
+  setMorph('Eye_Blink_L', (b.eyeBlinkLeft || 0) * 1.15);
+  setMorph('eyeBlinkRight', (b.eyeBlinkRight || 0) * 1.15);
+  setMorph('Eye_Blink_R', (b.eyeBlinkRight || 0) * 1.15);
+  setMorph('eyeWideLeft', (b.eyeWideLeft || 0) * 1.15);
+  setMorph('eyeWideRight', (b.eyeWideRight || 0) * 1.15);
+  setMorph('browInnerUp', (b.browInnerUp || 0) * 1.15);
+  setMorph('browDownLeft', (b.browDownLeft || 0) * 1.1);
+  setMorph('browDownRight', (b.browDownRight || 0) * 1.1);
+  setMorph('browOuterUpLeft', (b.browOuterUpLeft || 0) * 1.1);
+  setMorph('browOuterUpRight', (b.browOuterUpRight || 0) * 1.1);
+  setMorph('cheekPuff', (b.cheekPuff || 0) * 1.2);
+};
+
+window.resetFace = function() {
+  Object.keys(morphTargetsByName).forEach((name) => {
+    morphTargetsByName[name].forEach((target) => {
+      if (target.mesh.morphTargetInfluences) target.mesh.morphTargetInfluences[target.index] = 0;
+    });
+  });
+  lastVisemeName = null;
+  if (headBone && neutralHeadRotation) headBone.rotation.copy(neutralHeadRotation);
+  if (headGroup) headGroup.rotation.set(0, 0, 0);
+  if (leftEyeBone && neutralLeftEyeRotation) leftEyeBone.rotation.copy(neutralLeftEyeRotation);
+  if (rightEyeBone && neutralRightEyeRotation) rightEyeBone.rotation.copy(neutralRightEyeRotation);
+};
+</script>
+</body>
+</html>

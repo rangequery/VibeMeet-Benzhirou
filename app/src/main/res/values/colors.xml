@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ============ VibeMeet Premium Palette ============ -->
+    <color name="brand_primary">#243B6B</color>
+    <color name="brand_primary_dark">#101827</color>
+    <color name="brand_primary_light">#5268FF</color>
+    <color name="brand_primary_container">#EAF0FF</color>
+
+    <color name="brand_accent">#0F9F9A</color>
+    <color name="brand_accent_light">#54D6CB</color>
+    <color name="brand_accent_container">#E5FAF7</color>
+
+    <color name="brand_warm">#F4A261</color>
+    <color name="brand_warm_container">#FFF2E7</color>
+
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F4F6FB</color>
+    <color name="surface_elevated">#FFFFFF</color>
+    <color name="background">#F7F9FC</color>
+    <color name="background_dark">#0E1625</color>
+
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_tertiary">#94A3B8</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <color name="success">#16A34A</color>
+    <color name="warning">#F59E0B</color>
+    <color name="error">#DC2626</color>
+    <color name="info">#2563EB</color>
+
+    <color name="divider">#E5EAF2</color>
+    <color name="outline">#CBD5E1</color>
+    <color name="shadow_tint">#1A243B6B</color>
+
+    <!-- Legacy names remapped for compatibility -->
+    <color name="casablanca_red">@color/brand_primary</color>
+    <color name="casablanca_orange">@color/brand_warm</color>
+    <color name="casablanca_yellow">#F8C471</color>
+    <color name="casablanca_teal">@color/brand_accent</color>
+    <color name="casablanca_dark">@color/text_primary</color>
+    <color name="casablanca_light">@color/background</color>
+    <color name="casablanca_card">@color/surface</color>
+    <color name="casablanca_text_secondary">@color/text_secondary</color>
+    <color name="casablanca_accent_light">@color/brand_warm_container</color>
+</resources>
